@@ -11,3 +11,11 @@ output "workspace_id" {
 output "workspace_url" {
   value = azurerm_databricks_workspace.this.workspace_url
 }
+
+output "private_subnet_address_prefixes" {
+  value = azurerm_subnet.private.address_prefixes
+}
+
+output "public_subnet_address_prefixes" {
+  value = azurerm_subnet.public.address_prefixes
+}

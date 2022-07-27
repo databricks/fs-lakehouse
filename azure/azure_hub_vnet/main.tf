@@ -1,11 +1,12 @@
 resource "azurerm_resource_group" "this" {
-  name     = var.resource_group_name
+  name     = var.hub_resource_group_name
   location = var.location
 }
 
 resource "azurerm_virtual_network" "this" {
-  name     = var.vnet_name
-  location = azurerm_resource_group.this.location
+  name          = var.hub_vnet_name
+  location      = azurerm_resource_group.this.location
+  address_space = [var.hub_vnet_address_space]
 }
 
 resource "azurerm_subnet" "this" {
@@ -13,7 +14,11 @@ resource "azurerm_subnet" "this" {
   resource_group_name  = azurerm_resource_group.this.name
   virtual_network_name = azurerm_virtual_network.this.name
 
-  address_prefixes = var.firewall_subnet_address_prefixes
+  address_prefixes = [var.firewall_subnet_address_prefixes]
+  service_endpoints = [
+    "Microsoft.Storage",
+    "Microsoft.AzureActiveDirectory"
+  ]
 }
 
 resource "azurerm_public_ip" "this" {

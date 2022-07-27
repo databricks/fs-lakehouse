@@ -8,29 +8,39 @@ variable "databricks_resource_group_name" {
   description = "Name of resource group into which Databricks will be deployed"
 }
 
-variable "databricks_virtual_network_name" {
+variable "location" {
+  type        = string
+  description = "Location in which Databricks will be deployed"
+}
+
+variable "vnet_id" {
+  type        = string
+  description = "ID of existing virtual network into which Databricks will be deployed"
+}
+
+variable "vnet_name" {
   type        = string
   description = "Name of existing virtual network into which Databricks will be deployed"
 }
 
-variable "private_subnet_name" {
+variable "nsg_id" {
   type        = string
-  description = "Name of the private subnet"
+  description = "ID of existing Network Security Group"
 }
 
-variable "public_subnet_name" {
+variable "route_table_id" {
   type        = string
-  description = "Name of the public subnet"
+  description = "ID of existing Route Table"
 }
 
-variable "public_subnet_association_id" {
-  type        = string
-  description = "Public subnet association id"
+variable "private_subnet_address_prefixes" {
+  type        = list(string)
+  description = "Address space for private Databricks subnet"
 }
 
-variable "private_subnet_association_id" {
-  type        = string
-  description = "Private subnet association id"
+variable "public_subnet_address_prefixes" {
+  type        = list(string)
+  description = "Address space for public Databricks subnet"
 }
 
 variable "tags" {
