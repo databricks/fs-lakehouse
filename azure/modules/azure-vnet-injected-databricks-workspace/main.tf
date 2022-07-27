@@ -11,7 +11,7 @@ resource "azurerm_subnet" "private" {
   resource_group_name  = var.databricks_resource_group_name
   virtual_network_name = var.vnet_name
 
-  address_prefixes = [var.private_subnet_address_prefixes]
+  address_prefixes = var.private_subnet_address_prefixes
 
   delegation {
     name = "databricks-private-subnet-delegation"
@@ -28,7 +28,7 @@ resource "azurerm_subnet" "public" {
   resource_group_name  = var.databricks_resource_group_name
   virtual_network_name = var.vnet_name
 
-  address_prefixes = [var.public_subnet_address_prefixes]
+  address_prefixes = var.public_subnet_address_prefixes
 
   delegation {
     name = "databricks-public-subnet-delegation"

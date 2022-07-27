@@ -1,39 +1,42 @@
-./aws/base/.terraform/*
-./aws/base/.terraform.lock.hcl
-./aws/base/terraform.tfstate
-./aws/base/terraform.tfstate.backup
-./aws/base_customer_vpc/.terraform/*
-./aws/base_customer_vpc/.terraform.lock.hcl
-./aws/base_customer_vpc/terraform.tfstate
-./aws/base_customer_vpc/terraform.tfstate.backup
-./aws/security/.terraform/*
-./aws/security/.terraform.lock.hcl
-./aws/security/terraform.tfstate
-./aws/security/terraform.tfstate.backup
-./aws/fs_lakehouse/.terraform/*
-./aws/fs_lakehouse/.terraform.lock.hcl
-./aws/fs_lakehouse/terraform.tfstate
-./aws/fs_lakehouse/terraform.tfstate.backup
-./azure/base/.terraform/*
-./azure/base/.terraform.lock.hcl
-./azure/base/terraform.tfstate
-./azure/base/terraform.tfstate.backup
-./azure/managed_vnet/.terraform/*
-./azure/managed_vnet/.terraform.lock.hcl
-./azure/managed_vnet/terraform.tfstate
-./azure/managed_vnet/terraform.tfstate.backup
-./gcp/.terraform/*
-./gcp/.idea/*
-./gcp/terraform.tfstate
-./gcp/terraform.tfstate.backup
-./gcp/.terraform.lock.hcl
-./azure/.idea/*
-./azure/terraform.tfstate
-./azure/terraform.tfstate.backup
-./azure/.terraform.lock.hcl
+*~
+*.sw?
+# Local .terraform directories
+**/.terraform/*
 
+# .tfstate files
+*.tfstate
+*.tfstate.*
 
-./.idea
+# Lock Files
+*.lock.hcl
 
-/azure/managed_vnet/.terraform/
-/azure/.terraform/
+# Crash log files
+crash.log
+crash.*.log
+
+# Exclude all .tfvars files, which are likely to contain sensitive data, such as
+# password, private keys, and other secrets. These should not be part of version 
+# control as they are data points which are potentially sensitive and subject 
+# to change depending on the environment.
+*.tfvars
+*.tfvars.json
+
+# Ignore override files as they are usually used to override resources locally and so
+# are not checked in
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Include override files you do wish to add to version control using negated pattern
+# !example_override.tf
+
+# Include tfplan files to ignore the plan output of command: terraform plan -out=tfplan
+# example: *tfplan*
+
+# Ignore CLI configuration files
+.terraformrc
+terraform.rc
+
+# Ignore Poetry test artificts
+__pycache__*

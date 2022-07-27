@@ -48,6 +48,8 @@ resource "azurerm_route_table" "this" {
 
 resource "azurerm_route" "firewall_route" {
   name                   = "to-firewall"
+  resource_group_name    = azurerm_resource_group.this.name
+  route_table_name       = azurerm_route_table.this.name
   address_prefix         = "0.0.0.0/0"
   next_hop_type          = "VirtualAppliance"
   next_hop_in_ip_address = data.azurerm_firewall.this.ip_configuration[0].private_ip_address
@@ -55,7 +57,7 @@ resource "azurerm_route" "firewall_route" {
 
 resource "azurerm_route" "scc_routes" {
   count               = length(var.scc_relay_address_prefixes)
-  name                = "to-${data.azurerm_resource_group.location}-SCC-relay-ip-${count.index})"
+  name                = "to-${azurerm_resource_group.this.location}-SCC-relay-ip-${count.index})"
   resource_group_name = azurerm_resource_group.this.name
   route_table_name    = azurerm_route_table.this.name
   address_prefix      = var.scc_relay_address_prefixes[count.index]
@@ -63,7 +65,7 @@ resource "azurerm_route" "scc_routes" {
 }
 
 module "databricks_workspace" {
-  source                          = "../modules/azure-databricks-workspace"
+  source                          = "../modules/azure-vnet-injected-databricks-workspace"
   workspace_name                  = var.workspace_name
   databricks_resource_group_name  = azurerm_resource_group.this.name
   location                        = azurerm_virtual_network.this.location
@@ -71,8 +73,8 @@ module "databricks_workspace" {
   vnet_name                       = azurerm_virtual_network.this.name
   nsg_id                          = azurerm_network_security_group.this.id
   route_table_id                  = azurerm_route_table.this.id
-  private_subnet_address_prefixes = var.private_subnet_address_prefix
-  public_subnet_address_prefixes  = var.public_subnet_address_prefix
+  private_subnet_address_prefixes = var.private_subnet_address_prefixes
+  public_subnet_address_prefixes  = var.public_subnet_address_prefixes
   tags                            = var.tags
 }
 
@@ -85,10 +87,10 @@ resource "azurerm_firewall_application_rule_collection" "this" {
 
   rule {
     name = "public-repos"
-    source_addresses = [
+    source_addresses = concat(
       var.public_subnet_address_prefixes,
       var.private_subnet_address_prefixes
-    ]
+    )
     target_fqdns = var.public_repos
     protocol {
       port = "443"
@@ -102,10 +104,10 @@ resource "azurerm_firewall_application_rule_collection" "this" {
 
   rule {
     name = "IPinfo"
-    source_addresses = [
+    source_addresses = concat(
       var.public_subnet_address_prefixes,
       var.private_subnet_address_prefixes
-    ]
+    )
     target_fqdns = ["*.ipinfo.io"]
     protocol {
       port = "443"
@@ -123,29 +125,29 @@ resource "azurerm_firewall_application_rule_collection" "this" {
 }
 
 resource "azurerm_firewall_network_rule_collection" "this" {
-  name = "Databricks-${var.workspace_name}"
+  name                = "Databricks-${var.workspace_name}"
   azure_firewall_name = data.azurerm_firewall.this.name
   resource_group_name = var.hub_resource_group_name
-  priority = 200
-  action = "Allow"
+  priority            = 200
+  action              = "Allow"
 
   rule {
     name = "webapp-and-ext-infra"
-    source_addresses = [
-        var.public_subnet_address_prefixes,
-        var.private_subnet_address_prefixes
-      ]
-    destination_ports = ["443"]
+    source_addresses = concat(
+      var.public_subnet_address_prefixes,
+      var.private_subnet_address_prefixes
+    )
+    destination_ports     = ["443"]
     destination_addresses = var.webapp_and_infra_routes
-    protocols = ["TCP"]
+    protocols             = ["TCP"]
   }
 
   rule {
     name = "db-control-plane-service-tags"
-    source_addresses = [
+    source_addresses = concat(
       var.public_subnet_address_prefixes,
       var.private_subnet_address_prefixes
-    ]
+    )
     destination_addresses = [
       "AzureDatabricks",
       "Sql.${local.title_cased_location}",
@@ -153,7 +155,7 @@ resource "azurerm_firewall_network_rule_collection" "this" {
       "EventHub.${local.title_cased_location}"
     ]
     destination_ports = ["443", "9093", "3306"]
-    protocols = ["TCP", "UDP"]
-    
+    protocols         = ["TCP", "UDP"]
+
   }
 }

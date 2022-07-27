@@ -4,9 +4,10 @@ resource "azurerm_resource_group" "this" {
 }
 
 resource "azurerm_virtual_network" "this" {
-  name          = var.hub_vnet_name
-  location      = azurerm_resource_group.this.location
-  address_space = [var.hub_vnet_address_space]
+  name                = var.hub_vnet_name
+  location            = azurerm_resource_group.this.location
+  resource_group_name = azurerm_resource_group.this.name
+  address_space       = [var.hub_vnet_address_space]
 }
 
 resource "azurerm_subnet" "this" {
