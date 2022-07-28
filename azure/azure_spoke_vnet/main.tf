@@ -122,6 +122,19 @@ resource "azurerm_firewall_application_rule_collection" "this" {
       type = "Http"
     }
   }
+
+  rule {
+    name = "ganglia-ui"
+    source_addresses = concat(
+      var.public_subnet_address_prefixes,
+      var.private_subnet_address_prefixes
+    )
+    target_fqdns = ["cdnjs.com", "cdnjs.cloudflare.com"]
+    protocol {
+      port = "443"
+      type = "Https"
+    }
+  }
 }
 
 resource "azurerm_firewall_network_rule_collection" "this" {
