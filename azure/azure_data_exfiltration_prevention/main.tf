@@ -22,7 +22,7 @@ module "spoke_vnet" {
   spoke_vnet_address_space            = var.spoke_vnet_address_space
   spoke_resource_group_name           = var.spoke_resource_group_name
   scc_relay_address_prefixes          = var.scc_relay_address_prefixes
-  privatelink_subnet_address_prefixes = var.private_subnet_address_prefixes
+  privatelink_subnet_address_prefixes = var.privatelink_subnet_address_prefixes
   webapp_and_infra_routes             = var.webapp_and_infra_routes
   public_repos                        = var.public_repos
   tags                                = var.tags
