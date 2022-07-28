@@ -46,5 +46,4 @@ variable "public_subnet_address_prefixes" {
 variable "tags" {
   type        = map(string)
   description = "Map of tags to attach to Databricks workspace"
-  default     = {}
 }
