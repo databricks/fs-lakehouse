@@ -11,7 +11,7 @@ resource "azurerm_virtual_network" "this" {
 }
 
 resource "azurerm_subnet" "this" {
-  name                 = "firewall-subnet"
+  name                 = "AzureFirewallSubnet"
   resource_group_name  = azurerm_resource_group.this.name
   virtual_network_name = azurerm_virtual_network.this.name
 
@@ -31,7 +31,7 @@ resource "azurerm_public_ip" "this" {
 }
 
 resource "azurerm_firewall" "this" {
-  name                = "firewall-${azurerm_virtual_network.this.name})"
+  name                = "firewall-${azurerm_virtual_network.this.name}"
   location            = azurerm_resource_group.this.location
   resource_group_name = azurerm_resource_group.this.name
   sku_name            = "AZFW_VNet"

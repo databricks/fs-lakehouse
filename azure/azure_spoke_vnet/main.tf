@@ -25,11 +25,18 @@ resource "azurerm_virtual_network" "this" {
   tags                = var.tags
 }
 
-resource "azurerm_virtual_network_peering" "this" {
+resource "azurerm_virtual_network_peering" "spoke_to_hub" {
   name                      = format("from-%s-to-%s-peer", azurerm_virtual_network.this.name, data.azurerm_virtual_network.hub_vnet.name)
   resource_group_name       = azurerm_resource_group.this.name
   virtual_network_name      = azurerm_virtual_network.this.name
   remote_virtual_network_id = data.azurerm_virtual_network.hub_vnet.id
+}
+
+resource "azurerm_virtual_network_peering" "hub_to_spoke" {
+  name                      = format("from-%s-to-%s-peer", data.azurerm_virtual_network.hub_vnet.name, azurerm_virtual_network.this.name)
+  resource_group_name       = var.hub_resource_group_name
+  virtual_network_name      = data.azurerm_virtual_network.hub_vnet.name
+  remote_virtual_network_id = azurerm_virtual_network.this.id
 }
 
 resource "azurerm_network_security_group" "this" {
@@ -57,7 +64,7 @@ resource "azurerm_route" "firewall_route" {
 
 resource "azurerm_route" "scc_routes" {
   count               = length(var.scc_relay_address_prefixes)
-  name                = "to-${azurerm_resource_group.this.location}-SCC-relay-ip-${count.index})"
+  name                = "to-SCC-relay-ip-${count.index}"
   resource_group_name = azurerm_resource_group.this.name
   route_table_name    = azurerm_route_table.this.name
   address_prefix      = var.scc_relay_address_prefixes[count.index]

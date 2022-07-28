@@ -57,11 +57,6 @@ variable "privatelink_subnet_address_prefixes" {
   default     = ["10.2.1.0/26"]
 }
 
-variable "ext_infra_routes" {
-  type        = map(any)
-  description = "(Required)"
-}
-
 variable "webapp_and_infra_routes" {
   type        = list(string)
   description = <<EOT

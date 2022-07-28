@@ -7,12 +7,18 @@ resource "azurerm_subnet" "privatelink" {
   enforce_private_link_endpoint_network_policies = true
 }
 
+resource "random_string" "suffix" {
+  length  = 5
+  special = false
+  upper   = false
+}
+
 resource "azurerm_storage_account" "this" {
-  name                     = "storage-${var.project_name}"
+  name                     = "storage${random_string.suffix.result}"
   resource_group_name      = azurerm_resource_group.this.name
   location                 = azurerm_resource_group.this.location
   account_replication_type = "RAGRS"
-  account_tier = "Standard"
+  account_tier             = "Standard"
 }
 
 resource "azurerm_private_dns_zone" "storage" {
@@ -22,7 +28,7 @@ resource "azurerm_private_dns_zone" "storage" {
 
 resource "azurerm_private_dns_zone_virtual_network_link" "storage" {
   name                  = "vnet-link"
-  resource_group_name   = azurerm_resource_group.this
+  resource_group_name   = azurerm_resource_group.this.name
   private_dns_zone_name = azurerm_private_dns_zone.storage.name
   virtual_network_id    = azurerm_virtual_network.this.id
 }
@@ -47,9 +53,9 @@ resource "azurerm_private_endpoint" "storage" {
 }
 
 resource "azurerm_private_dns_a_record" "this" {
-  name = "endpoint-storage-arecord"
-  zone_name = azurerm_private_dns_zone.storage.name
+  name                = "endpoint-storage-arecord"
+  zone_name           = azurerm_private_dns_zone.storage.name
   resource_group_name = azurerm_resource_group.this.name
-  ttl = 300
-  records = [azurerm_private_endpoint.storage.private_service_connection.0.private_ip_address]
+  ttl                 = 300
+  records             = [azurerm_private_endpoint.storage.private_service_connection.0.private_ip_address]
 }
